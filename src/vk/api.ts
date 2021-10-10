@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { firstValueFrom } from 'rxjs';
-import { buildQueryString } from 'src/utils/api';
-import { vkApi } from '.';
+import { buildQueryString } from '@utils';
+import { vkApi } from './constants';
 
 export enum Language {
   RU = 'ru',
