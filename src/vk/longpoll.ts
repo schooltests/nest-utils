@@ -1,10 +1,10 @@
+import { BusEvent, EventBus } from '@events';
+import { VkNewMessageEvent, VkNewPaymentEvent } from '@models';
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { buildQueryString } from '@utils';
 import { asyncScheduler, firstValueFrom } from 'rxjs';
-import { BusEvent, EventBus } from 'src/events/events.bus';
-import { VkNewMessageEvent, VkNewPaymentEvent } from 'src/models';
-import { buildQueryString } from 'src/utils/api';
 import { vkApi } from './constants';
 
 type IntegrationConfigProps = () => {

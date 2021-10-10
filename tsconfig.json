@@ -9,7 +9,6 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "strict": true,
     "noImplicitAny": true,
@@ -19,7 +18,18 @@
     "importHelpers": true,
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": false,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "paths": {
+      "@models": [
+        "./src/models/index"
+      ],
+      "@events": [
+        "./src/events/index"
+      ],
+      "@utils": [
+        "./src/utils/index"
+      ]
+    }
   },
   "exclude": [
     "node_modules",
