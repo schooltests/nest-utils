@@ -5,6 +5,9 @@
   "repository": "git@github.com:woophi/nest-utils.git",
   "author": "konst <mik.kon6610@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
   "dependencies": {
     "@nestjs/axios": "^0.0.2",
     "@nestjs/common": "^8.0.11",
