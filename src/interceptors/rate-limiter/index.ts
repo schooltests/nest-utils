@@ -10,7 +10,7 @@ export class FetchLimiter implements NestMiddleware {
   limiter: RateLimiter.RateLimiterRedis;
   constructor(
     @Inject(ConfigService)
-    private config: ConfigService,
+    private readonly config: ConfigService,
   ) {
     const connection: redis.ClientOpts = config.get<string>('cache.uri')
       ? { url: config.get<string>('cache.uri') }

@@ -6,7 +6,7 @@ import { CacheManager, JsKey } from '@models';
 @Injectable()
 export class RedisHashService {
   private readonly logger = new Logger(RedisHashService.name);
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: CacheManager) {}
+  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager) {}
 
   hset<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK]) {
     this.logger.debug(`Set hash ${hashKey} and row ${row}`);

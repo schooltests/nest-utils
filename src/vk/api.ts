@@ -14,7 +14,7 @@ export enum Language {
 @Injectable()
 export class VkApiService {
   private readonly logger = new Logger(VkApiService.name);
-  constructor(private httpService: HttpService, private configService: ConfigService) {}
+  constructor(private readonly httpService: HttpService, private readonly config: ConfigService) {}
 
   async updateWithAvatars(userIds: number[], language?: Language) {
     if (!userIds.length) {
@@ -28,7 +28,7 @@ export class VkApiService {
             { user_ids: `${ids}` },
             { fields: 'photo_100' },
             {
-              access_token: this.configService.get<string>('integration.vkServiceKey', ''),
+              access_token: this.config.get<string>('integration.vkServiceKey', ''),
             },
             { v: vkApi },
             { lang: language ?? Language.RU },
@@ -86,7 +86,7 @@ export class VkApiService {
             { user_ids: userIds.join(',') },
             { message },
             {
-              access_token: this.configService.get<string>('integration.vkServiceKey', ''),
+              access_token: this.config.get<string>('integration.vkServiceKey', ''),
             },
             { v: vkApi },
           ])}`,
@@ -108,14 +108,14 @@ export class VkApiService {
     try {
       const url = `https://api.vk.com/method/messages.send${buildQueryString([
         {
-          access_token: this.configService.get<string>('integration.groupAccessKey', ''),
+          access_token: this.config.get<string>('integration.groupAccessKey', ''),
         },
         {
           keyboard,
         },
         { v: vkApi },
         {
-          peer_id: this.configService.get<string>('integration.botConversationId', '2000000001'),
+          peer_id: this.config.get<string>('integration.botConversationId', '2000000001'),
         },
         {
           random_id: randomBytes(256).readBigInt64BE() as unknown as string,
@@ -143,7 +143,7 @@ export class VkApiService {
     try {
       const url = `https://api.vk.com/method/messages.send${buildQueryString([
         {
-          access_token: this.configService.get<string>('integration.groupAccessKey', ''),
+          access_token: this.config.get<string>('integration.groupAccessKey', ''),
         },
         {
           keyboard,

@@ -1,16 +1,11 @@
 import { BusEvent, EventBus } from '@events';
 import { VkNewMessageEvent, VkNewPaymentEvent } from '@models';
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { buildQueryString } from '@utils';
 import { asyncScheduler, firstValueFrom } from 'rxjs';
 import { vkApi } from './constants';
-
-type IntegrationConfigProps = () => {
-  groupId: number;
-  groupAccessKey: string;
-};
 
 @Injectable()
 export class VkLongpollService implements OnModuleInit {
@@ -19,14 +14,10 @@ export class VkLongpollService implements OnModuleInit {
   private ts?: string;
   private readonly logger = new Logger(VkLongpollService.name);
 
-  constructor(
-    private httpService: HttpService,
-    @Inject('integration')
-    private config: ConfigType<IntegrationConfigProps>,
-  ) {}
+  constructor(private readonly httpService: HttpService, private readonly config: ConfigService) {}
 
   async onModuleInit() {
-    if (!this.config.groupId || !this.config.groupAccessKey) {
+    if (!this.config.get<number>('integration.groupId') || !this.config.get<string>('integration.groupAccessKey')) {
       this.logger.error('Cannot start long poll. Missing required keys: groupId or accessToken');
       return;
     }
@@ -36,7 +27,7 @@ export class VkLongpollService implements OnModuleInit {
   }
 
   async init() {
-    const longPollServer = await this.fetchLongPollServer(Number(this.config.groupId));
+    const longPollServer = await this.fetchLongPollServer(Number(this.config.get<number>('integration.groupId')));
     if (!longPollServer) {
       this.logger.log(`No info from fetchLongPollServer`);
       asyncScheduler.schedule(() => {
@@ -60,7 +51,7 @@ export class VkLongpollService implements OnModuleInit {
           `https://api.vk.com/method/groups.getLongPollServer${buildQueryString([
             { group_id: `${groupId}` },
             {
-              access_token: this.config.groupAccessKey!,
+              access_token: this.config.get<string>('integration.groupAccessKey', ''),
             },
             { v: vkApi },
           ])}`,
