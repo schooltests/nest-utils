@@ -4,5 +4,28 @@
   "main": "index.js",
   "repository": "git@github.com:woophi/nest-utils.git",
   "author": "konst <mik.kon6610@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@nestjs/axios": "^0.0.2",
+    "@nestjs/common": "^8.0.11",
+    "@nestjs/config": "^1.0.2",
+    "@nestjs/core": "^8.0.11",
+    "@nestjs/platform-express": "^8.0.11",
+    "cache-manager-redis-store": "^2.0.0",
+    "class-validator": "^0.13.1",
+    "moment": "^2.29.1",
+    "pg": "^8.7.1",
+    "rate-limiter-flexible": "^2.3.1",
+    "redis": "^3.1.2",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.4.0",
+    "typeorm": "^0.2.38"
+  },
+  "devDependencies": {
+    "@types/cache-manager-redis-store": "^2.0.0",
+    "@types/express": "^4.17.13",
+    "@types/redis": "^2.8.32",
+    "tslib": "^2.3.1",
+    "typescript": "^4.4.3"
+  }
 }
