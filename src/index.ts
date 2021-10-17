@@ -5,13 +5,7 @@ export * from './interceptors/exts';
 export { FetchLimiter } from './interceptors/rate-limiter';
 export { TimeoutInterceptor } from './interceptors/timeout.interceptor';
 export { TransformInterceptor } from './interceptors/transform.interceptor';
-export {
-  RedisCacheModule,
-  RedisHashService,
-  HashKeys,
-  HashValue,
-  IRedisHashService,
-} from './redis-cache/redis-cache.module';
+export * as redis from './redis-cache/redis-cache.module';
 export * from './utils';
 export * as vk from './vk';
 export * from './exceptions';

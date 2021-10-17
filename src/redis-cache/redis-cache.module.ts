@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheManager, JsKey } from '@models';
 
-enum HashKey {
+export enum HashKey {
   Nothing = 'Nothing',
 }
 
@@ -13,22 +13,8 @@ export type HashValue = {
 
 export type HashKeys = HashKey;
 
-export interface IRedisHashService {
-  hset<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK]): void;
-  hsetWithExpire<K extends JsKey, HK extends HashKeys>(
-    hashKey: HK,
-    row: K,
-    value: HashValue[HK],
-    ttl: number,
-  ): Promise<void>;
-  hdel<K extends JsKey>(hashKey: HashKeys, row?: K): void;
-  hexpire(hashKey: HashKeys, ttl: number): void;
-  hget<K extends JsKey, HK extends HashKeys>(hashKey: HK): Promise<{ [key in K]: HashValue[HK] }>;
-  hgetField<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K): Promise<{ [key in K]: HashValue[HK] }[K] | null>;
-}
-
 @Injectable()
-export class RedisHashService implements IRedisHashService {
+export class RedisHashService {
   private readonly logger = new Logger(RedisHashService.name);
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager) {}
 
