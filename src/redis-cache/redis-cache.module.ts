@@ -3,17 +3,34 @@ import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheManager, JsKey } from '@models';
 
+export namespace RedisHashing {
+  export enum NothingKey {
+    Nothing = 'Nothing',
+  }
+
+  export interface HashValue {
+    [NothingKey.Nothing]: unknown;
+  }
+
+  export type HashKeys = NothingKey;
+}
+
 @Injectable()
 export class RedisHashService {
   private readonly logger = new Logger(RedisHashService.name);
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager) {}
 
-  hset<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK]) {
+  hset<K extends JsKey, HK extends RedisHashing.HashKeys>(hashKey: HK, row: K, value: RedisHashing.HashValue[HK]) {
     this.logger.debug(`Set hash ${hashKey} and row ${row}`);
     this.cacheManager.store.getClient().hmset(hashKey, row, JSON.stringify(value));
   }
 
-  async hsetWithExpire<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK], ttl: number) {
+  async hsetWithExpire<K extends JsKey, HK extends RedisHashing.HashKeys>(
+    hashKey: HK,
+    row: K,
+    value: RedisHashing.HashValue[HK],
+    ttl: number,
+  ) {
     this.logger.debug(`Set hash ${hashKey} and row ${row}`);
     const hashWasCreated = !!(await this.hget(hashKey));
 
@@ -24,7 +41,7 @@ export class RedisHashService {
     }
   }
 
-  hdel<K extends JsKey>(hashKey: HashKeys, row?: K) {
+  hdel<K extends JsKey>(hashKey: RedisHashing.HashKeys, row?: K) {
     if (row) {
       this.logger.debug(`Delete row ${row} in hash ${hashKey}`);
       this.cacheManager.store.getClient().hdel(hashKey, row);
@@ -34,13 +51,13 @@ export class RedisHashService {
     }
   }
 
-  hexpire(hashKey: HashKeys, ttl: number) {
+  hexpire(hashKey: RedisHashing.HashKeys, ttl: number) {
     this.logger.debug(`Set expire on hash ${hashKey}`);
     this.cacheManager.store.getClient().expire(hashKey, ttl);
   }
 
-  async hget<K extends JsKey, HK extends HashKeys>(hashKey: HK) {
-    return new Promise<{ [key in K]: HashValue[HK] }>((res, rej) => {
+  async hget<K extends JsKey, HK extends RedisHashing.HashKeys>(hashKey: HK) {
+    return new Promise<{ [key in K]: RedisHashing.HashValue[HK] }>((res, rej) => {
       this.cacheManager.store.getClient().hgetall(hashKey, (err, value) => {
         if (err) {
           return rej(err);
@@ -51,7 +68,7 @@ export class RedisHashService {
     });
   }
 
-  async hgetField<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K) {
+  async hgetField<K extends JsKey, HK extends RedisHashing.HashKeys>(hashKey: HK, row: K) {
     const value = await this.hget<K, HK>(hashKey);
     if (!value?.[row]) {
       return null;
@@ -85,13 +102,3 @@ const redisConnection = CacheModule.registerAsync({
   exports: [redisConnection, RedisHashService],
 })
 export class RedisCacheModule {}
-
-enum HashKey {
-  Nothing = 'Nothing',
-}
-
-export type HashValue<T = {}> = T & {
-  [HashKey.Nothing]: unknown;
-};
-
-export type HashKeys<T = {}> = HashKey & T;
