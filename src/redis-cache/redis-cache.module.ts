@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheManager, JsKey } from '@models';
 
-export enum HashKey {
+export const enum HashKey {
   Nothing = 'Nothing',
 }
 
