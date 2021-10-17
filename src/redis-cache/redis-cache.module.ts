@@ -94,4 +94,4 @@ export type HashValue = {
   [HashKey.Nothing]: unknown;
 };
 
-export type HashKeys = HashKey;
+export type HashKeys<T = {}> = HashKey & T;
