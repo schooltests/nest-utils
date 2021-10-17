@@ -90,7 +90,7 @@ enum HashKey {
   Nothing = 'Nothing',
 }
 
-export type HashValue = {
+export type HashValue<T = {}> = T & {
   [HashKey.Nothing]: unknown;
 };
 
