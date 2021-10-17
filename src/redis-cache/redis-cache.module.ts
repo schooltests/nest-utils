@@ -3,34 +3,41 @@ import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheManager, JsKey } from '@models';
 
-export namespace RedisHashing {
-  export enum NothingKey {
-    Nothing = 'Nothing',
-  }
+enum HashKey {
+  Nothing = 'Nothing',
+}
 
-  export interface HashValue {
-    [NothingKey.Nothing]: unknown;
-  }
+export type HashValue = {
+  [HashKey.Nothing]: unknown;
+};
 
-  export type HashKeys = NothingKey;
+export type HashKeys = HashKey;
+
+export interface IRedisHashService {
+  hset<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK]): void;
+  hsetWithExpire<K extends JsKey, HK extends HashKeys>(
+    hashKey: HK,
+    row: K,
+    value: HashValue[HK],
+    ttl: number,
+  ): Promise<void>;
+  hdel<K extends JsKey>(hashKey: HashKeys, row?: K): void;
+  hexpire(hashKey: HashKeys, ttl: number): void;
+  hget<K extends JsKey, HK extends HashKeys>(hashKey: HK): Promise<{ [key in K]: HashValue[HK] }>;
+  hgetField<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K): Promise<{ [key in K]: HashValue[HK] }[K] | null>;
 }
 
 @Injectable()
-export class RedisHashService {
+export class RedisHashService implements IRedisHashService {
   private readonly logger = new Logger(RedisHashService.name);
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager) {}
 
-  hset<K extends JsKey, HK extends RedisHashing.HashKeys>(hashKey: HK, row: K, value: RedisHashing.HashValue[HK]) {
+  hset<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK]) {
     this.logger.debug(`Set hash ${hashKey} and row ${row}`);
     this.cacheManager.store.getClient().hmset(hashKey, row, JSON.stringify(value));
   }
 
-  async hsetWithExpire<K extends JsKey, HK extends RedisHashing.HashKeys>(
-    hashKey: HK,
-    row: K,
-    value: RedisHashing.HashValue[HK],
-    ttl: number,
-  ) {
+  async hsetWithExpire<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K, value: HashValue[HK], ttl: number) {
     this.logger.debug(`Set hash ${hashKey} and row ${row}`);
     const hashWasCreated = !!(await this.hget(hashKey));
 
@@ -41,7 +48,7 @@ export class RedisHashService {
     }
   }
 
-  hdel<K extends JsKey>(hashKey: RedisHashing.HashKeys, row?: K) {
+  hdel<K extends JsKey>(hashKey: HashKeys, row?: K) {
     if (row) {
       this.logger.debug(`Delete row ${row} in hash ${hashKey}`);
       this.cacheManager.store.getClient().hdel(hashKey, row);
@@ -51,13 +58,13 @@ export class RedisHashService {
     }
   }
 
-  hexpire(hashKey: RedisHashing.HashKeys, ttl: number) {
+  hexpire(hashKey: HashKeys, ttl: number) {
     this.logger.debug(`Set expire on hash ${hashKey}`);
     this.cacheManager.store.getClient().expire(hashKey, ttl);
   }
 
-  async hget<K extends JsKey, HK extends RedisHashing.HashKeys>(hashKey: HK) {
-    return new Promise<{ [key in K]: RedisHashing.HashValue[HK] }>((res, rej) => {
+  async hget<K extends JsKey, HK extends HashKeys>(hashKey: HK) {
+    return new Promise<{ [key in K]: HashValue[HK] }>((res, rej) => {
       this.cacheManager.store.getClient().hgetall(hashKey, (err, value) => {
         if (err) {
           return rej(err);
@@ -68,7 +75,7 @@ export class RedisHashService {
     });
   }
 
-  async hgetField<K extends JsKey, HK extends RedisHashing.HashKeys>(hashKey: HK, row: K) {
+  async hgetField<K extends JsKey, HK extends HashKeys>(hashKey: HK, row: K) {
     const value = await this.hget<K, HK>(hashKey);
     if (!value?.[row]) {
       return null;
