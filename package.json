@@ -7,7 +7,7 @@
   "author": "konst <mik.kon6610@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepublish": "yarn build",
+    "prepublish": "rm -rf ./dist && yarn build",
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "release": "release-it"
   },
