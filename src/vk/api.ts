@@ -201,7 +201,7 @@ export class VkApiService {
         return;
       }
 
-      this.logger.log('setAppCounter done');
+      console.log('setAppCounter done', result.data);
     } catch (error) {
       this.logger.error('setAppCounter error');
       console.error(error);
