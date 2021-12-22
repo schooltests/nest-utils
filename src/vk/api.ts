@@ -1,9 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { buildQueryString } from '@utils';
 import { randomBytes } from 'crypto';
 import { firstValueFrom } from 'rxjs';
-import { buildQueryString } from '@utils';
 import { vkApi } from './constants';
 
 export enum Language {
@@ -14,9 +13,9 @@ export enum Language {
 @Injectable()
 export class VkApiService {
   private readonly logger = new Logger(VkApiService.name);
-  constructor(private readonly httpService: HttpService, private readonly config: ConfigService) {}
+  constructor(private readonly httpService: HttpService) {}
 
-  async updateWithAvatars(userIds: number[], language?: Language) {
+  async updateWithAvatars(userIds: number[], accessToken: string, language?: Language) {
     if (!userIds.length) {
       return [];
     }
@@ -28,7 +27,7 @@ export class VkApiService {
             { user_ids: `${ids}` },
             { fields: 'photo_100' },
             {
-              access_token: this.config.get<string>('integration.vkServiceKey', ''),
+              access_token: accessToken,
             },
             { v: vkApi },
             { lang: language ?? Language.RU },
@@ -75,7 +74,7 @@ export class VkApiService {
     }
   }
 
-  async sendPushNotification(userIds: number[], message: string, language?: Language) {
+  async sendPushNotification(userIds: number[], message: string, accessToken: string, language?: Language) {
     if (!userIds.length) {
       return;
     }
@@ -86,7 +85,7 @@ export class VkApiService {
             { user_ids: userIds.join(',') },
             { message },
             {
-              access_token: this.config.get<string>('integration.vkServiceKey', ''),
+              access_token: accessToken,
             },
             { v: vkApi },
           ])}`,
@@ -104,18 +103,18 @@ export class VkApiService {
     }
   }
 
-  async sendMessageToAdmins(keyboard: object, additionalText = '') {
+  async sendMessageToAdmins(keyboard: object, additionalText = '', accessToken: string, botConversationId = '2000000001') {
     try {
       const url = `https://api.vk.com/method/messages.send${buildQueryString([
         {
-          access_token: this.config.get<string>('integration.groupAccessKey', ''),
+          access_token: accessToken,
         },
         {
           keyboard,
         },
         { v: vkApi },
         {
-          peer_id: this.config.get<string>('integration.botConversationId', '2000000001'),
+          peer_id: botConversationId,
         },
         {
           random_id: randomBytes(256).readBigInt64BE() as unknown as string,
@@ -139,11 +138,11 @@ export class VkApiService {
       console.error(error);
     }
   }
-  async sendMessageToUser(keyboard: object, additionalText = '', peerId: number) {
+  async sendMessageToUser(keyboard: object, additionalText = '', peerId: number, accessToken: string) {
     try {
       const url = `https://api.vk.com/method/messages.send${buildQueryString([
         {
-          access_token: this.config.get<string>('integration.groupAccessKey', ''),
+          access_token: accessToken,
         },
         {
           keyboard,
@@ -172,6 +171,39 @@ export class VkApiService {
       this.logger.log('sendMessageToUser done');
     } catch (error) {
       this.logger.error('sendMessageToUser error');
+      console.error(error);
+    }
+  }
+
+  async setAppCounter(vkUserId: number, counterValue: string, accessToken: string) {
+    try {
+      const url = `https://api.vk.com/method/secure.setCounter${buildQueryString([
+        {
+          access_token: accessToken,
+        },
+        {
+          counter: counterValue,
+        },
+        {
+          user_id: String(vkUserId),
+        },
+        { v: vkApi },
+      ])}`;
+
+      const result = await firstValueFrom(this.httpService.post(url));
+
+      if (result.data.error) {
+        this.logger.log('setAppCounter failed ' + result.data.error?.error_msg);
+        return;
+      }
+      if (result.data.response && result.data.response.error) {
+        this.logger.log('setAppCounter failed ' + result.data.response?.error);
+        return;
+      }
+
+      this.logger.log('setAppCounter done');
+    } catch (error) {
+      this.logger.error('setAppCounter error');
       console.error(error);
     }
   }
