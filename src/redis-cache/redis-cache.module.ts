@@ -1,7 +1,7 @@
 import { CacheModule, CACHE_MANAGER, Global, Inject, Injectable, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
-import { CacheManager, JsKey } from '@models';
+import { CacheManager, JsKey } from '../models';
 
 export const enum HashKey {
   Nothing = 'Nothing',

@@ -1,9 +1,9 @@
 import { BusEvent, EventBus } from '../event-bus';
-import { VkNewMessageEvent, VkNewPaymentEvent } from '@models';
+import { VkNewMessageEvent, VkNewPaymentEvent } from '../models';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { buildQueryString } from '@utils';
+import { buildQueryString } from '../utils';
 import { asyncScheduler, firstValueFrom } from 'rxjs';
 import { vkApi } from './constants';
 

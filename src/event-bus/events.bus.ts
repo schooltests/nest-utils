@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { VkNewMessageEvent, VkNewPaymentEvent } from '@models';
+import { VkNewMessageEvent, VkNewPaymentEvent } from '../models';
 
 export enum BusEvent {
   VkLongPollMessages = 'vk_long_poll_messages',

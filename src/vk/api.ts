@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { buildQueryString } from '@utils';
+import { buildQueryString } from '../utils';
 import { randomBytes } from 'crypto';
 import { firstValueFrom } from 'rxjs';
 import { vkApi } from './constants';

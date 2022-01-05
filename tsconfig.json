@@ -19,14 +19,6 @@
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": false,
     "useUnknownInCatchVariables": false,
-    "paths": {
-      "@models": [
-        "./src/models/index"
-      ],
-      "@utils": [
-        "./src/utils/index"
-      ]
-    }
   },
   "exclude": [
     "node_modules",

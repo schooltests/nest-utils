@@ -1,4 +1,4 @@
-import { IDictionary } from '@models';
+import { IDictionary } from '../models';
 
 export const buildQueryString = (items: IDictionary<string | object>[]) => {
   const joined = items
