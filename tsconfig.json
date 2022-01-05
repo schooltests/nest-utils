@@ -23,9 +23,6 @@
       "@models": [
         "./src/models/index"
       ],
-      "@events": [
-        "./src/events/index"
-      ],
       "@utils": [
         "./src/utils/index"
       ]

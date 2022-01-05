@@ -1,4 +1,4 @@
-import { BusEvent, EventBus } from '@events';
+import { BusEvent, EventBus } from '../event-bus';
 import { VkNewMessageEvent, VkNewPaymentEvent } from '@models';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';

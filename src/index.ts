@@ -1,6 +1,6 @@
 export { readMigration } from './db/utils/read-files';
 export { autoRetryTransaction } from './db/utils/transactions';
-export { BusEvent, BusEventDto, EventBus } from './events/events.bus';
+export { BusEvent, BusEventDto, EventBus } from './event-bus';
 export * from './exceptions';
 export * from './interceptors/exts';
 export { FetchLimiter } from './interceptors/rate-limiter';
