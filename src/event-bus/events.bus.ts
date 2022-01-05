@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import * as ev from 'events';
 import { VkNewMessageEvent, VkNewPaymentEvent } from '../models';
 
 export enum BusEvent {
@@ -11,7 +11,7 @@ export type BusEventDto = {
   [BusEvent.VkLongPollPayments]: { payments: VkNewPaymentEvent[] };
 };
 
-class ClientCallbackClass extends EventEmitter {
+class ClientCallbackClass extends ev.EventEmitter {
   constructor() {
     super();
   }
