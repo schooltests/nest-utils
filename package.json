@@ -1,6 +1,6 @@
 {
   "name": "nest-utils",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "git@github.com:woophi/nest-utils.git",
