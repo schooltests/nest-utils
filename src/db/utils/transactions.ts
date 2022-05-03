@@ -1,14 +1,14 @@
-import { Connection, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import { IsolationLevel } from 'typeorm/driver/types/IsolationLevel';
 
 export const autoRetryTransaction = async <T>(
-  connection: Connection,
+  dataSource: DataSource,
   fn: (queryRunner: QueryRunner) => Promise<T>,
   isolationLevel: IsolationLevel = 'SERIALIZABLE',
   retryCount = Number.MAX_SAFE_INTEGER,
 ) => {
   for (let i = 0; i < retryCount; i++) {
-    const queryRunner = connection.createQueryRunner();
+    const queryRunner = dataSource.createQueryRunner();
     let result: T;
     await queryRunner.connect();
     await queryRunner.startTransaction(isolationLevel);
