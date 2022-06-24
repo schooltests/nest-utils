@@ -1,1 +1,1 @@
-export const vkApi = '5.131';
+export const vkApi = '5.132';

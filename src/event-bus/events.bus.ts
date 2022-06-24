@@ -1,14 +1,16 @@
 import * as ev from 'events';
-import { VkNewMessageEvent, VkNewPaymentEvent } from '../models';
+import { VkDonutEvents, VkNewMessageEvent, VkNewPaymentEvent } from '../models';
 
 export enum BusEvent {
   VkLongPollMessages = 'vk_long_poll_messages',
   VkLongPollPayments = 'vk_long_poll_payments',
+  VkLongPollDonut = 'vk_long_poll_donut',
 }
 
 export type BusEventDto = {
   [BusEvent.VkLongPollMessages]: { messages: VkNewMessageEvent[] };
   [BusEvent.VkLongPollPayments]: { payments: VkNewPaymentEvent[] };
+  [BusEvent.VkLongPollDonut]: { donut: VkDonutEvents };
 };
 
 class ClientCallbackClass extends ev.EventEmitter {

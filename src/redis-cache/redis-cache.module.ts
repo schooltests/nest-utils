@@ -21,7 +21,7 @@ export class RedisHashService {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager) {}
 
   hset<K extends JsKey, HK extends HashKeys['allKeys']>(hashKey: HK, row: K, value: HashValue[HK]) {
-    this.logger.debug(`Set hash ${hashKey} and row ${row}`);
+    this.logger.debug(`Set hash ${hashKey} and row ${String(row)}`);
     this.cacheManager.store.getClient().hmset(hashKey, row, JSON.stringify(value));
   }
 
@@ -31,7 +31,7 @@ export class RedisHashService {
     value: HashValue[HK],
     ttl: number,
   ) {
-    this.logger.debug(`Set hash ${hashKey} and row ${row}`);
+    this.logger.debug(`Set hash ${hashKey} and row ${String(row)}`);
     const hashWasCreated = !!(await this.hget(hashKey));
 
     this.cacheManager.store.getClient().hmset(hashKey, row, JSON.stringify(value));
@@ -43,7 +43,7 @@ export class RedisHashService {
 
   hdel<K extends JsKey>(hashKey: HashKeys['allKeys'], row?: K) {
     if (row) {
-      this.logger.debug(`Delete row ${row} in hash ${hashKey}`);
+      this.logger.debug(`Delete row ${String(row)} in hash ${hashKey}`);
       this.cacheManager.store.getClient().hdel(hashKey, row);
     } else {
       this.logger.debug(`Delete complete hash ${hashKey}`);
@@ -76,7 +76,7 @@ export class RedisHashService {
     const f = value[row];
     const parsed = JSON.parse(value[row] as unknown as string) as typeof f;
 
-    this.logger.debug(`Selecting hash ${hashKey} and row ${row}`);
+    this.logger.debug(`Selecting hash ${hashKey} and row ${String(row)}`);
 
     return parsed;
   }

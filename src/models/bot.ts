@@ -29,3 +29,55 @@ export type MessageObject = {
 };
 
 export type BotPayloadType = string;
+
+export type VkAllEvents = VkDonutEvents | VkNewMessageEvent | VkNewPaymentEvent;
+export type VkDonutEvents =
+  | VkDonutSubCreateEvent
+  | VkDonutSubProlongedEvent
+  | VkDonutSubExpiredEvent
+  | VkDonutSubCancelledEvent
+  | VkDonutSubPriceChangeEvent;
+
+export type VkDonutSubCreateEvent = {
+  type: 'donut_subscription_create';
+  object: {
+    amount: number;
+    amount_without_fee: number;
+    user_id: number;
+  };
+  group_id: number;
+};
+export type VkDonutSubProlongedEvent = {
+  type: 'donut_subscription_prolonged';
+  object: {
+    amount: number;
+    amount_without_fee: number;
+    user_id: number;
+  };
+  group_id: number;
+};
+export type VkDonutSubExpiredEvent = {
+  type: 'donut_subscription_expired';
+  object: {
+    user_id: number;
+  };
+  group_id: number;
+};
+export type VkDonutSubCancelledEvent = {
+  type: 'donut_subscription_cancelled';
+  object: {
+    user_id: number;
+  };
+  group_id: number;
+};
+export type VkDonutSubPriceChangeEvent = {
+  type: 'donut_subscription_price_changed';
+  object: {
+    user_id: number;
+    amount_old: number;
+    amount_new: number;
+    amount_diff: number;
+    amount_diff_without_fee: number;
+  };
+  group_id: number;
+};
