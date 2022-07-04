@@ -1,9 +1,9 @@
 import * as RateLimiter from 'rate-limiter-flexible';
-import * as redis from 'redis';
 import * as moment from 'moment';
 import { Response, Request } from 'express';
 import { HttpStatus, Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Redis, { RedisOptions } from 'ioredis';
 
 @Injectable()
 export class FetchLimiter implements NestMiddleware {
@@ -12,19 +12,19 @@ export class FetchLimiter implements NestMiddleware {
     @Inject(ConfigService)
     private readonly config: ConfigService,
   ) {
-    const connection: redis.ClientOpts = config.get<string>('cache.uri')
-      ? { url: config.get<string>('cache.uri') }
-      : {
-          host: config.get<string>('cache.host'),
-          port: config.get<number>('cache.port'),
-          db: config.get<number>('cache.db'),
-        };
+    const connection: RedisOptions = {
+      host: config.get<string>('cache.host'),
+      port: config.get<number>('cache.port'),
+      db: config.get<number>('cache.db'),
+    };
+
+    const client = new Redis({
+      enableOfflineQueue: false,
+      ...connection,
+    });
 
     this.limiter = new RateLimiter.RateLimiterRedis({
-      storeClient: redis.createClient({
-        enable_offline_queue: false,
-        ...connection,
-      }),
+      storeClient: client,
       points: 4, // Number of points
       duration: 1, // Per second(s)
       keyPrefix: 'rlflx', // must be unique for limiters with different purpose

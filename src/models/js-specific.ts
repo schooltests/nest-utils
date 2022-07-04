@@ -1,1 +1,1 @@
-export type JsKey = string | number | symbol;
+export type JsKey = string | number;
