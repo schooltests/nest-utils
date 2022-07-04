@@ -22,7 +22,7 @@ export class RedisHashService {
 
   hset<K extends JsKey, HK extends HashKeys['allKeys']>(hashKey: HK, row: K, value: HashValue[HK]) {
     this.logger.debug(`Set hash ${hashKey} and row ${String(row)}`);
-    this.cacheManager.getClient().hmset(hashKey, { [row]: JSON.stringify(value) });
+    this.cacheManager.store.getClient().hmset(hashKey, { [row]: JSON.stringify(value) });
   }
 
   async hsetWithExpire<K extends JsKey, HK extends HashKeys['allKeys']>(
@@ -32,9 +32,9 @@ export class RedisHashService {
     ttl: number,
   ) {
     this.logger.debug(`Set hash ${hashKey} and row ${String(row)}`);
-    const hashWasCreated = !!(await this.cacheManager.getClient().exists(hashKey));
+    const hashWasCreated = !!(await this.cacheManager.store.getClient().exists(hashKey));
 
-    this.cacheManager.getClient().hmset(hashKey, { [row]: JSON.stringify(value) });
+    this.cacheManager.store.getClient().hmset(hashKey, { [row]: JSON.stringify(value) });
 
     if (!hashWasCreated) {
       this.hexpire(hashKey, ttl);
@@ -44,7 +44,7 @@ export class RedisHashService {
   hdel<K extends JsKey>(hashKey: HashKeys['allKeys'], row?: K) {
     if (row) {
       this.logger.debug(`Delete row ${String(row)} in hash ${hashKey}`);
-      this.cacheManager.getClient().hdel(hashKey, String(row));
+      this.cacheManager.store.getClient().hdel(hashKey, String(row));
     } else {
       this.logger.debug(`Delete complete hash ${hashKey}`);
       this.cacheManager.del(hashKey);
@@ -53,12 +53,12 @@ export class RedisHashService {
 
   hexpire(hashKey: HashKeys['allKeys'], ttl: number) {
     this.logger.debug(`Set expire on hash ${hashKey}`);
-    this.cacheManager.getClient().expire(hashKey, ttl);
+    this.cacheManager.store.getClient().expire(hashKey, ttl);
   }
 
   async hget<K extends JsKey, HK extends HashKeys['allKeys']>(hashKey: HK, row: K) {
     return new Promise<HashValue[HK]>((res, rej) => {
-      this.cacheManager.getClient().hget(hashKey, String(row), (err, value) => {
+      this.cacheManager.store.getClient().hget(hashKey, String(row), (err, value) => {
         if (err) {
           return rej(err);
         }
