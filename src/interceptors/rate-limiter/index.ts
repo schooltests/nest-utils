@@ -34,7 +34,7 @@ export class FetchLimiter implements NestMiddleware {
 
   async use(req: Request, res: Response, next: () => void) {
     try {
-      const userId = req.query['userId'] ?? req.body['userId'] ?? 0;
+      const userId = req.query['userId'] ?? req.body['userId'] ?? req.query['vk_user_id'] ?? req.body['vk_user_id'] ?? 0;
       await this.limiter.consume(`p_${req.path}_ip_${req.ip}_u_${userId}`);
       return next();
     } catch (rateLimiterRes) {
