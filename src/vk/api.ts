@@ -25,7 +25,7 @@ export class VkApiService {
         this.httpService.post(
           `https://api.vk.com/method/users.get${buildQueryString([
             { user_ids: `${ids}` },
-            { fields: 'photo_100' },
+            { fields: 'photo_100,sex' },
             {
               access_token: accessToken,
             },
@@ -49,6 +49,7 @@ export class VkApiService {
         photo_100: string;
         first_name: string;
         last_name: string;
+        sex: number;
       }[] = result.data.response;
 
       const updatedUsers: {
@@ -57,12 +58,14 @@ export class VkApiService {
         name: string;
         firstName: string;
         lastName: string;
+        sex: number;
       }[] = avatars.map(a => ({
         userId: a.id,
         avatar: a.photo_100,
         name: `${a.first_name || ''} ${a.last_name || ''}`,
         firstName: a.first_name || '',
         lastName: a.last_name || '',
+        sex: a.sex,
       }));
 
       this.logger.log(`updateWithAvatars done`);
