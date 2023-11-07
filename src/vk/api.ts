@@ -77,7 +77,7 @@ export class VkApiService {
     }
   }
 
-  async sendPushNotification(userIds: number[], message: string, accessToken: string, language?: Language) {
+  async sendPushNotification(userIds: number[], message: string, accessToken: string, fragment: string = '') {
     if (!userIds.length) {
       return;
     }
@@ -91,6 +91,7 @@ export class VkApiService {
               access_token: accessToken,
             },
             { v: vkApi },
+            { fragment },
           ])}`,
         ),
       );
