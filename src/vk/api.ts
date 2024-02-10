@@ -25,7 +25,7 @@ export class VkApiService {
         this.httpService.post(
           `https://api.vk.com/method/users.get${buildQueryString([
             { user_ids: `${ids}` },
-            { fields: 'photo_100,sex' },
+            { fields: 'photo_200_orig,sex' },
             {
               access_token: accessToken,
             },
@@ -46,7 +46,7 @@ export class VkApiService {
 
       const avatars: {
         id: number;
-        photo_100: string;
+        photo_200_orig: string;
         first_name: string;
         last_name: string;
         sex: number;
@@ -61,7 +61,7 @@ export class VkApiService {
         sex: number;
       }[] = avatars.map(a => ({
         userId: a.id,
-        avatar: a.photo_100,
+        avatar: a.photo_200_orig,
         name: `${a.first_name || ''} ${a.last_name || ''}`,
         firstName: a.first_name || '',
         lastName: a.last_name || '',
